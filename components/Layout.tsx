@@ -1,43 +1,49 @@
-import * as React from 'react'
-import Link from 'next/link'
-import Head from 'next/head'
+import Head from 'next/head';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import styled, { ThemeProvider } from 'styled-components';
+import { IRootState } from '../redux';
+import Header from './header';
 
-type Props = {
-  title?: string
+const Container = styled.div`
+`;
+
+interface ILayoutContainer {
+  children: JSX.Element[];
 }
 
-const Layout: React.FunctionComponent<Props> = ({
-  children,
-  title = 'This is the default title',
-}) => (
-  <div>
-    <Head>
-      <title>{title}</title>
-      <meta charSet="utf-8" />
-      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-    </Head>
-    <header>
-      <nav>
-        <Link href="/">
-          <a>Home</a>
-        </Link>{' '}
-        |{' '}
-        <Link href="/about">
-          <a>About</a>
-        </Link>{' '}
-        |{' '}
-        <Link href="/users">
-          <a>Users List</a>
-        </Link>{' '}
-        | <a href="/api/users">Users API</a>
-      </nav>
-    </header>
-    {children}
-    <footer>
-      <hr />
-      <span>I'm here to stay (Footer)</span>
-    </footer>
-  </div>
-)
+class LayoutContainer extends Component<ILayoutContainer & ReduxProps> {
+  render() {
+    const { theme, children } = this.props;
+    return (
+      <Container>
+        <Head>
+          <title>Profiles</title>
+          <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1" />
+        </Head>
+        <ThemeProvider theme={theme}>
+          <Header />
+          {children}
+        </ThemeProvider>
+      </Container>
+    );
+  }
+}
 
-export default Layout
+// export default LayoutContainer;
+
+const mapStateToProps = (state: IRootState) => {
+  const { theme } = state.profileState;
+  return {
+    theme,
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {};
+};
+
+type ReduxProps = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
+
+export default connect(mapStateToProps, mapDispatchToProps)(LayoutContainer);
